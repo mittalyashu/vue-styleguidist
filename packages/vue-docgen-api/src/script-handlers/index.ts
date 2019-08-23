@@ -9,8 +9,9 @@ import methodHandler from './methodHandler'
 import mixinsHandler from './mixinsHandler'
 import propHandler from './propHandler'
 import slotHandler from './slotHandler'
+import { Handler } from '../parse-script'
 
-export default [
+const defaultHandlers: Handler[] = [
 	// have to be first if they can be overridden
 	extendsHandler,
 	// have to be second as they can be overridden too
@@ -25,3 +26,5 @@ export default [
 	classMethodHandler,
 	classPropHandler
 ]
+
+export default defaultHandlers

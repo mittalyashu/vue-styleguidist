@@ -1,5 +1,6 @@
-import * as fs from 'fs'
+import { readFile } from 'fs'
 import * as path from 'path'
+import { promisify } from 'util'
 import { parseComponent } from 'vue-template-compiler'
 import Documentation from './Documentation'
 import parseScript, { Handler as ScriptHandler } from './parse-script'
@@ -7,6 +8,8 @@ import parseTemplate, { Handler as TemplateHandler } from './parse-template'
 import scriptHandlers from './script-handlers'
 import templateHandlers from './template-handlers'
 import cacher from './utils/cacher'
+
+const read = promisify(readFile)
 
 const ERROR_EMPTY_DOCUMENT = 'The passed source is empty'
 
@@ -56,8 +59,8 @@ export interface DocGenOptions {
  * @param {string} filePath path of the current file against whom to resolve the mixins
  * @returns {object} documentation object
  */
-export function parseFile(documentation: Documentation, opt: ParseOptions) {
-	const source = fs.readFileSync(opt.filePath, {
+export async function parseFile(documentation: Documentation, opt: ParseOptions) {
+	const source = await read(opt.filePath, {
 		encoding: 'utf-8'
 	})
 	return parseSource(documentation, source, opt)
@@ -69,7 +72,7 @@ export function parseFile(documentation: Documentation, opt: ParseOptions) {
  * @param {string} filePath path of the current file against whom to resolve the mixins
  * @returns {object} documentation object
  */
-export function parseSource(documentation: Documentation, source: string, opt: ParseOptions) {
+export async function parseSource(documentation: Documentation, source: string, opt: ParseOptions) {
 	const singleFileComponent = /\.vue$/i.test(path.extname(opt.filePath))
 	let scriptSource: string | undefined
 
@@ -97,7 +100,7 @@ export function parseSource(documentation: Documentation, source: string, opt: P
 				parts && parts.template && parts.template.attrs ? parts.template.attrs.src : ''
 			const extTemplSource =
 				extTemplSrc && extTemplSrc.length
-					? fs.readFileSync(path.resolve(path.dirname(opt.filePath), extTemplSrc), {
+					? await read(path.resolve(path.dirname(opt.filePath), extTemplSrc), {
 							encoding: 'utf-8'
 					  })
 					: ''
@@ -116,7 +119,7 @@ export function parseSource(documentation: Documentation, source: string, opt: P
 		const extSrc: string = parts && parts.script && parts.script.attrs ? parts.script.attrs.src : ''
 		const extSource =
 			extSrc && extSrc.length
-				? fs.readFileSync(path.resolve(path.dirname(opt.filePath), extSrc), {
+				? await read(path.resolve(path.dirname(opt.filePath), extSrc), {
 						encoding: 'utf-8'
 				  })
 				: ''
@@ -138,7 +141,7 @@ export function parseSource(documentation: Documentation, source: string, opt: P
 
 		const addScriptHandlers: ScriptHandler[] = opt.addScriptHandlers || []
 		if (scriptSource) {
-			parseScript(scriptSource, documentation, [...scriptHandlers, ...addScriptHandlers], opt)
+			await parseScript(scriptSource, documentation, [...scriptHandlers, ...addScriptHandlers], opt)
 		}
 	}
 
