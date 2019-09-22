@@ -10,7 +10,6 @@ Object {
     "placeholder": Object {
       "description": "",
       "name": "placeholder",
-      "required": "",
       "tags": Object {},
       "type": Object {
         "name": "undefined",
@@ -19,7 +18,6 @@ Object {
     "question": Object {
       "description": "",
       "name": "question",
-      "required": "",
       "tags": Object {},
       "type": Object {
         "name": "undefined",

@@ -49,7 +49,7 @@ export interface EventDescriptor extends DocBlockTags {
 export interface PropDescriptor {
 	type?: { name: string; func?: boolean }
 	description: string
-	required?: string | boolean
+	required?: boolean
 	defaultValue?: { value: string; func?: boolean }
 	tags: { [title: string]: BlockTag[] }
 	/**
